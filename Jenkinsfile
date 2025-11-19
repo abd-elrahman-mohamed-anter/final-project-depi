@@ -1,8 +1,10 @@
 pipeline {
-    agent any
-    tools {
-        maven 'maven38'     // <--- Matches your Jenkins Maven installation
-        jdk 'jdk17'         // <--- Matches your Jenkins JDK installation
+
+    agent {
+        docker {
+            image 'maven:3.9.6-eclipse-temurin-17'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
 
     environment {
@@ -11,9 +13,8 @@ pipeline {
         IMAGE_NAME = "ghcr.io/${GITHUB_REPO}"
         IMAGE_TAG = "v${env.BUILD_NUMBER}"
 
-        // Jenkins credentials
-        GITHUB_CHECKOUT_CREDS = 'github-creds'        // username + password for checkout
-        GITHUB_FINAL_TOKEN = credentials('GITHUB_FINAL_TOKEN')  // token for GHCR push
+        GITHUB_CHECKOUT_CREDS = 'github-creds'
+        GITHUB_FINAL_TOKEN = credentials('GITHUB_FINAL_TOKEN')
         SONAR_FINAL_TOKEN = credentials('SONAR_FINAL_TOKEN')
     }
 
@@ -39,7 +40,6 @@ pipeline {
                     sh """
                         mvn sonar:sonar \
                         -DskipTests \
-                        -Dsonar.projectKey=devops-javafullstack-final-project \
                         -Dsonar.login=${SONAR_FINAL_TOKEN}
                     """
                 }
@@ -49,13 +49,8 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 sh """
-                    echo "Logging into GHCR..."
                     echo ${GITHUB_FINAL_TOKEN} | docker login ghcr.io -u ${GITHUB_USER} --password-stdin
-
-                    echo "Building Docker image..."
                     docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
-
-                    echo "Pushing Docker image..."
                     docker push ${IMAGE_NAME}:${IMAGE_TAG}
                 """
             }
@@ -64,10 +59,10 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline finished successfully! Image pushed: ${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "Pipeline finished successfully!"
         }
         failure {
-            echo "Pipeline failed."
+            echo "Pipeline failed!"
         }
     }
 }
