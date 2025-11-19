@@ -1,0 +1,93 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout Repo
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Cache Maven packages
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      # Setup Java + Maven
+      - name: Set up JDK 17 and Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: maven
+
+      # Build Maven Project
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      # Run Checkstyle (without failing the build)
+      - name: Run Checkstyle
+        run: mvn checkstyle:checkstyle || true
+
+      # Login to DockerHub
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # Build Docker Image
+      - name: Build Docker Image
+        run: |
+          IMAGE_TAG=v${{ github.run_number }}
+          docker build -t rabiaadel/final-project:$IMAGE_TAG .
+
+      # Install Trivy
+      - name: Install Trivy
+        uses: aquasecurity/setup-trivy@v0.2.3
+        with:
+          version: latest
+
+      # Run Trivy scan (without failing the build)
+      - name: Run Trivy scan
+        run: |
+          IMAGE_TAG=v${{ github.run_number }}
+          trivy image --severity CRITICAL,HIGH rabiaadel/final-project:$IMAGE_TAG || true
+
+      # Push Docker Image
+      - name: Push Docker Image
+        run: |
+          IMAGE_TAG=v${{ github.run_number }}
+          docker push rabiaadel/final-project:$IMAGE_TAG
+
+      # -------------------------------
+      # UPDATE IMAGE TAG FOR ARGOCD (CD)
+      # -------------------------------
+
+      - name: Update K8s image tag
+        run: |
+          IMAGE_TAG=v${{ github.run_number }}
+          sed -i "s|image: rabiaadel/final-project:.*|image: rabiaadel/final-project:$IMAGE_TAG|" k8s/twitter-app/deployment.yaml
+
+      - name: Commit and Push updated manifest
+        run: |
+          git config --local user.email "actions@github.com"
+          git config --local user.name "github-actions"
+          git add k8s/twitter-app/deployment.yaml
+          git commit -m "Update image tag to $IMAGE_TAG" || echo "No changes to commit"
+          git push

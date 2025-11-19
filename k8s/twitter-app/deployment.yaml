@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: final-project
-        image: rabiaadel/final-project:latest
+        image: rabiaadel/final-project:v2
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
