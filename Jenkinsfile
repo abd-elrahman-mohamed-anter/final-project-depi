@@ -1,9 +1,9 @@
 pipeline {
-    agent any
-
-    tools {
-        maven 'maven38'     // Matches Jenkins Maven installation
-        jdk 'jdk17'         // Matches Jenkins JDK installation
+    agent {
+        docker {
+            image 'maven:3.9.6-eclipse-temurin-17'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
     }
 
     environment {
