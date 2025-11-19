@@ -39,12 +39,12 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('MySonarServer') {
+                withSonarQubeEnv('SonarQube') {
                     sh """
                         mvn sonar:sonar \
                         -DskipTests \
                         -Dsonar.projectKey=devops-javafullstack-final-project \
-                        -Dsonar.host.url=${SONARQUBE_URL} \
+                        -Dsonar.host.url=localhost:9000 \
                         -Dsonar.login=${SONAR_FINAL_TOKEN}
                     """
                 }
