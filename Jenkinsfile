@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    tools {
+        maven 'Maven-3.9'  // Ensure this matches the name of your Maven installation in Jenkins
+        jdk 'OpenJDK-17'    // Ensure this matches the name of your JDK installation in Jenkins
+    }
 
     environment {
         GITHUB_USER = "rabiaadel"
