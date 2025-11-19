@@ -43,7 +43,7 @@ pipeline {
                     sh """
                         mvn sonar:sonar \
                         -DskipTests \
-                        -Dsonar.projectKey=devops-javafullstack-final-project \
+                        -Dsonar.projectKey=jenkins-ci \
                         -Dsonar.host.url=http://host.docker.internal:9000 \
                         -Dsonar.login=${SONAR_FINAL_TOKEN}
                     """
