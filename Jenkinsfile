@@ -7,19 +7,19 @@ pipeline {
     }
 
     environment {
+        // GitHub Settings
         GITHUB_USER = "rabiaadel"
         GITHUB_REPO = "rabiaadel/devops-javafullstack-final-project"
-
-        // Jenkins credentials
         GITHUB_CHECKOUT_CREDS = 'github-creds'
-        GITHUB_FINAL_TOKEN = credentials('GITHUB_FINAL_TOKEN')
+        
+        // SonarQube Token
         SONAR_FINAL_TOKEN = credentials('SONAR_FINAL_TOKEN')
 
-        // DockerHub configuration
+        // Docker Hub Settings
         DOCKERHUB_USER = "rabiaadel"
         DOCKERHUB_TOKEN = credentials('DOCKERHUB_FINAL_TOKEN')
-        DOCKER_IMAGE = "${DOCKERHUB_USER}/final-project"
-        DOCKER_TAG = "v${env.BUILD_NUMBER}"
+        DOCKER_IMAGE = "rabiaadel/final-project"
+        DOCKER_TAG = "v${BUILD_NUMBER}"
     }
 
     stages {
@@ -34,10 +34,10 @@ pipeline {
 
         stage('Build with Maven') {
             steps {
-                sh """
+                sh '''
                     mvn -version
                     mvn -B clean package -DskipTests
-                """
+                '''
             }
         }
 
@@ -46,10 +46,10 @@ pipeline {
                 withSonarQubeEnv('SonarQube') {
                     sh """
                         mvn sonar:sonar \
-                        -DskipTests \
-                        -Dsonar.projectKey=jenkins-ci \
-                        -Dsonar.host.url=http://host.docker.internal:9000 \
-                        -Dsonar.login=${SONAR_FINAL_TOKEN}
+                            -DskipTests \
+                            -Dsonar.projectKey=jenkins-ci \
+                            -Dsonar.host.url=http://host.docker.internal:9000 \
+                            -Dsonar.login=$SONAR_FINAL_TOKEN
                     """
                 }
             }
@@ -59,7 +59,7 @@ pipeline {
             steps {
                 sh """
                     echo "Logging into Docker Hub..."
-                    echo ${DOCKERHUB_TOKEN} | docker login -u ${DOCKERHUB_USER} --password-stdin
+                    echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
 
                     echo "Building Docker image..."
                     docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
@@ -75,7 +75,7 @@ pipeline {
 
     post {
         success {
-            echo "Pipeline finished successfully! Image pushed: ${IMAGE_NAME}:${IMAGE_TAG}"
+            echo "Pipeline finished successfully! Image pushed: ${DOCKER_IMAGE}:${DOCKER_TAG}"
         }
         failure {
             echo "Pipeline failed."
