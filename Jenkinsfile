@@ -28,8 +28,8 @@ pipeline {
         stage('Build with Maven') {
             steps {
                 sh '''
-                    mvn -version
-                    mvn -B clean package -DskipTests
+                    ./mvnw -version
+                    ./mvnw -B clean package -DskipTests
                 '''
             }
         }
