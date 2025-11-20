@@ -17,9 +17,7 @@ pipeline {
 
         // Docker Hub Settings
         DOCKERHUB_USER = "rabiaadel"
-        DOCKERHUB_TOKEN = credentials('DOCKERHUB_FINAL_TOKEN')
-        DOCKER_IMAGE = "rabiaadel/final-project"
-        DOCKER_TAG = "v${BUILD_NUMBER}"
+        DOCKERHUB_REPO = "${DOCKERHUB_USER}/final-project"
     }
 
     stages {
@@ -55,27 +53,31 @@ pipeline {
             }
         }
 
-        stage('Docker Build & Push') {
+        stage('Build Docker Image') {
             steps {
-                sh """
-                    echo "Logging into Docker Hub..."
-                    echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USER" --password-stdin
-
-                    echo "Building Docker image..."
-                    docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
-
-                    echo "Pushing Docker image..."
-                    docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-
-                    echo "Image pushed successfully!"
-                """
+                sh '''
+                    docker build -t ${DOCKERHUB_REPO}:${BUILD_NUMBER} .
+                    docker tag ${DOCKERHUB_REPO}:${BUILD_NUMBER} ${DOCKERHUB_REPO}:latest
+                '''
             }
         }
-    }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                        echo $DOCKER_PASS | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push ${DOCKERHUB_REPO}:${BUILD_NUMBER}
+                        docker push ${DOCKERHUB_REPO}:latest
+                    '''
+                }
+            }
+        }
+    } // ← FIXED: closing stages
 
     post {
         success {
-            echo "Pipeline finished successfully! Image pushed: ${DOCKER_IMAGE}:${DOCKER_TAG}"
+            echo "Pipeline finished successfully! Image pushed: ${DOCKERHUB_REPO}:${BUILD_NUMBER}"
         }
         failure {
             echo "Pipeline failed."
