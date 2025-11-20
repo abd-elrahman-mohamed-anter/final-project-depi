@@ -9,15 +9,17 @@ pipeline {
     environment {
         GITHUB_USER = "rabiaadel"
         GITHUB_REPO = "rabiaadel/devops-javafullstack-final-project"
-        IMAGE_NAME = "ghcr.io/${GITHUB_REPO}"
-        IMAGE_TAG = "v${env.BUILD_NUMBER}"
 
         // Jenkins credentials
         GITHUB_CHECKOUT_CREDS = 'github-creds'
         GITHUB_FINAL_TOKEN = credentials('GITHUB_FINAL_TOKEN')
         SONAR_FINAL_TOKEN = credentials('SONAR_FINAL_TOKEN')
+
+        // DockerHub configuration
         DOCKERHUB_USER = "rabiaadel"
         DOCKERHUB_TOKEN = credentials('DOCKERHUB_FINAL_TOKEN')
+        DOCKER_IMAGE = "${DOCKERHUB_USER}/final-project"
+        DOCKER_TAG = "v${env.BUILD_NUMBER}"
     }
 
     stages {
