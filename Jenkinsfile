@@ -16,6 +16,8 @@ pipeline {
         GITHUB_CHECKOUT_CREDS = 'github-creds'
         GITHUB_FINAL_TOKEN = credentials('GITHUB_FINAL_TOKEN')
         SONAR_FINAL_TOKEN = credentials('SONAR_FINAL_TOKEN')
+        DOCKERHUB_USER = "rabiaadel"
+        DOCKERHUB_TOKEN = credentials('DOCKERHUB_FINAL_TOKEN')
     }
 
     stages {
@@ -54,14 +56,16 @@ pipeline {
         stage('Docker Build & Push') {
             steps {
                 sh """
-                    echo "Logging into GHCR…"
-                    echo ${GITHUB_FINAL_TOKEN} | docker login ghcr.io -u ${GITHUB_USER} --password-stdin
+                    echo "Logging into Docker Hub..."
+                    echo ${DOCKERHUB_TOKEN} | docker login -u ${DOCKERHUB_USER} --password-stdin
 
-                    echo "Building Docker image…"
-                    docker build -t ${IMAGE_NAME}:${IMAGE_TAG} .
+                    echo "Building Docker image..."
+                    docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
 
-                    echo "Pushing Docker image…"
-                    docker push ${IMAGE_NAME}:${IMAGE_TAG}
+                    echo "Pushing Docker image..."
+                    docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+
+                    echo "Image pushed successfully!"
                 """
             }
         }
