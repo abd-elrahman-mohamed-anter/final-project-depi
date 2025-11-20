@@ -38,7 +38,7 @@ pipeline {
             steps {
                 withSonarQubeEnv('SonarQube') {
                     sh """
-                        mvn sonar:sonar \
+                        ./mvnw sonar:sonar \
                             -DskipTests \
                             -Dsonar.projectKey=jenkins-ci \
                             -Dsonar.host.url=http://host.docker.internal:9000 \
