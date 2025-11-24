@@ -9,14 +9,13 @@ services:
     ports:
       - "8090:8080"      # host:container
     environment:
-      # choose a spring profile which activates mysql settings in your pom/properties
       SPRING_PROFILES_ACTIVE: "mysql"
       DB_HOST: db
       DB_PORT: 3306
       DB_USER: ${MYSQL_USER:-appuser}
       DB_PASSWORD: ${MYSQL_PASSWORD:-apppass}
       DB_NAME: ${MYSQL_DATABASE:-twitterapp}
-      # Java tuning (optional)
+      # Java tuning options
       JAVA_OPTS: "-Xms256m -Xmx512m -Dspring.profiles.active=${SPRING_PROFILES_ACTIVE}"
     depends_on:
        db :

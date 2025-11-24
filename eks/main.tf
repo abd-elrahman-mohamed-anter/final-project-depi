@@ -1,6 +1,5 @@
-##########################
 # Provider & AZs
-##########################
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -9,9 +8,8 @@ data "aws_availability_zones" "available" {
   state = "available"
 }
 
-##########################
 # VPC & Networking
-##########################
+
 resource "aws_vpc" "project_vpc" {
   cidr_block = "10.0.0.0/16"
 
@@ -51,9 +49,8 @@ resource "aws_route_table_association" "a" {
   route_table_id = aws_route_table.project_route_table.id
 }
 
-##########################
 # Security Groups
-##########################
+
 resource "aws_security_group" "project_cluster_sg" {
   vpc_id = aws_vpc.project_vpc.id
 
@@ -96,9 +93,8 @@ resource "aws_security_group" "project_node_sg" {
   tags = { Name = "project-node-sg" }
 }
 
-##########################
 # IAM Roles
-##########################
+
 resource "aws_iam_role" "project_cluster_role" {
   name = "project-cluster-role"
 
@@ -158,9 +154,9 @@ resource "aws_iam_role_policy_attachment" "project_node_group_registry_policy" {
   policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
 }
 
-##########################
+
 # EKS Cluster & Node Group
-##########################
+
 resource "aws_eks_cluster" "project" {
   name     = "project-cluster"
   role_arn = aws_iam_role.project_cluster_role.arn

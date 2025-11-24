@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: 'https://github.com/rabiaadel/devops-javafullstack-final-project.git'  # Replace with your repo
+    repoURL: 'https://github.com/rabiaadel/devops-javafullstack-final-project.git' 
     path: k8s/twitter-app
     targetRevision: HEAD
   destination:
