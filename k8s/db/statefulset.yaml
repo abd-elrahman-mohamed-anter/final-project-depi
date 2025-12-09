@@ -1,11 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: mysql
   namespace: db
   labels:
     app: mysql
 spec:
+  serviceName: mysql   
   replicas: 1
   selector:
     matchLabels:
@@ -30,9 +31,15 @@ spec:
         ports:
         - containerPort: 3306
         volumeMounts:
-        - name: mysql-pv
+        - name: mysql-storage
           mountPath: /var/lib/mysql
-      volumes:
-      - name: mysql-pv
-        persistentVolumeClaim:
-          claimName: mysql-pvc
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-storage   
+      namespace: db
+    spec:
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 2Gi

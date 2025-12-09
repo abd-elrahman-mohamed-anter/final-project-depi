@@ -4,6 +4,7 @@ metadata:
   name: mysql
   namespace: db
 spec:
+  clusterIP: None  
   selector:
     app: mysql
   ports:
@@ -11,4 +12,3 @@ spec:
       protocol: TCP
       port: 3306
       targetPort: 3306
-  clusterIP: None
