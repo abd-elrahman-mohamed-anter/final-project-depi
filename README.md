@@ -148,6 +148,8 @@ The project successfully pushed the built image into Nexus registry.
 
 # 🔍 6. CI Pipelines
 
+![PibLine Flow](images/pibelineflow.jpg)
+
 ## CI/CD with GitHub Actions
 
 ![GitHub Actions](images/project-actions.PNG)
