@@ -323,7 +323,7 @@ Everything is fully automated and production-ready.
 
 **Mazen Hassan** – DevOps Engineer
 
-**Abdelrahman Anter** – DevOps Engineer
+**Abdelrahman Mohamed Anter** – DevOps Engineer
 
 **Mahmoud Hussien** – DevOps Engineer
 
