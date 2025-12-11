@@ -65,17 +65,6 @@ eks/
 ├── output.tf
 ├── terraform.tfstate
 └── terraform.tfstate.backup
-screens/
-├── all-resources.png
-├── app.png
-├── argo.jpg
-├── cluster.png
-├── grafana.png
-├── llb.png
-├── metrics.png
-├── portforward.png
-├── prometheus.png
-└── tf-out.png
 ```
 
 ---
