@@ -9,14 +9,20 @@ This project demonstrates a complete **production-like DevOps pipeline** deploye
 * **EKS Architecture Diagram:**
   ![All Resources](screens/all-resources.png)
 
-* **Terraform Apply Output:**
-  ![Cluster](screens/cluster.png)
-
-* **kubectl get nodes / pods:**
-  ![Port Forward / Metrics](screens/portforward.png)
+* **Application Running (Pods / Services):**
+  ![App](screens/app.png)
 
 * **Argo CD Dashboard:**
-  ![LLB / LoadBalancer](screens/llb.png)
+  ![Argo CD](screens/argo.jpg)
+
+* **Terraform Apply Output:**
+  ![Terraform Output](screens/tf-out.png)
+
+* **kubectl get nodes / pods:**
+  ![Cluster](screens/cluster.png)
+
+* **Load Balancer / Service:**
+  ![LLB / Load Balancer](screens/llb.png)
 
 * **Prometheus UI:**
   ![Prometheus](screens/prometheus.png)
@@ -24,8 +30,11 @@ This project demonstrates a complete **production-like DevOps pipeline** deploye
 * **Grafana Dashboards:**
   ![Grafana](screens/grafana.png)
 
-* **MySQL Deployment Running:**
+* **Metrics / Monitoring:**
   ![Metrics](screens/metrics.png)
+
+* **Port Forward Example:**
+  ![Port Forward](screens/portforward.png)
 
 ---
 
@@ -62,12 +71,15 @@ eks/
 └── terraform.tfstate.backup
 screens/
 ├── all-resources.png
+├── app.png
+├── argo.jpg
 ├── cluster.png
 ├── grafana.png
 ├── llb.png
 ├── metrics.png
 ├── portforward.png
-└── prometheus.png
+├── prometheus.png
+└── tf-out.png
 ```
 
 ---
@@ -249,6 +261,5 @@ admin / admin
 
 ![All Resources](screens/all-resources.png)
 
----
-
+تحب أعمل النسخة دي كمان؟
 
