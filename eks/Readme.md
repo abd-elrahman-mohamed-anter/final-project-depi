@@ -253,5 +253,3 @@ admin / admin
 * DB internal-only (no public exposure)
 
 ---
-تحب أعمل النسخة دي كمان؟
-
