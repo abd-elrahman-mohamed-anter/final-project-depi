@@ -131,7 +131,7 @@ name = "project-cluster"
 
 * MySQL 8
 * Database: `twitterdb`
-* Password: `rootpass`
+* Password: `your--pass`
 * Service: `db` on port 3306
 
 ---
@@ -248,15 +248,10 @@ admin / admin
 
 # 🛡️ Security Notes
 
-* SSH only allowed from your IP: `156.221.20.201/32`
+* SSH only allowed from your IP: `<your IP>/32`
 * Monitoring stack isolated via ClusterIP
 * DB internal-only (no public exposure)
 
 ---
-
-# 🧱 Infrastructure Diagram
-
-![All Resources](screens/all-resources.png)
-
 تحب أعمل النسخة دي كمان؟
 
