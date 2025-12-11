@@ -3,27 +3,6 @@
 This project demonstrates a complete **production-like DevOps pipeline** deployed on **Amazon EKS**, fully automated with **Terraform**, monitored with **Prometheus & Grafana**, and continuously deployed using **Argo CD (GitOps)**.
 ---
 
-# Workflow 
-
-Terraform
-   │
-   ▼
-AWS EKS Cluster + Node Group
-   │
-   ▼
-Kubernetes Workloads (Pods/DB/Services)
-   │
-   ├─────────────┐
-   ▼             ▼
-Argo CD       Prometheus
-(GitOps)     (Monitoring)
-               │
-               ▼
-             Grafana
-           (Dashboards)
-
----
-
 # 📸 Screenshots
 
 * **EKS Resources Diagram:**
