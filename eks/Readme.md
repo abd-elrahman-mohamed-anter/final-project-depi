@@ -6,10 +6,10 @@ This project demonstrates a complete **production-like DevOps pipeline** deploye
 
 # 📸 Screenshots
 
-* **EKS Architecture Diagram:**
+* **EKS Resources Diagram:**
   ![All Resources](screens/all-resources.png)
 
-* **Application Running (Pods / Services):**
+* **Application Running :**
   ![App](screens/app.png)
 
 * **Argo CD Dashboard:**
@@ -18,22 +18,19 @@ This project demonstrates a complete **production-like DevOps pipeline** deploye
 * **Terraform Apply Output:**
   ![Terraform Output](screens/tf-out.png)
 
-* **kubectl get nodes / pods:**
-  ![Cluster](screens/cluster.png)
-
 * **Load Balancer / Service:**
   ![LLB / Load Balancer](screens/llb.png)
 
 * **Prometheus UI:**
   ![Prometheus](screens/prometheus.png)
 
-* **Grafana Dashboards:**
+* ** Grafana Dashboards:**
   ![Grafana](screens/grafana.png)
 
 * **Metrics / Monitoring:**
   ![Metrics](screens/metrics.png)
 
-* **Port Forward Example:**
+* **Port Forward Example for Prometheus & Grafana :**
   ![Port Forward](screens/portforward.png)
 
 ---
