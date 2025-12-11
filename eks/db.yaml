@@ -17,9 +17,9 @@ spec:
         image: mysql:8.0
         env:
         - name: MYSQL_ROOT_PASSWORD
-          value: rootpass
+          value: **
         - name: MYSQL_DATABASE
-          value: twitterdb
+          value: **
         ports:
         - containerPort: 3306
 ---
