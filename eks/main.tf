@@ -179,9 +179,9 @@ resource "aws_eks_node_group" "project" {
   subnet_ids      = aws_subnet.project_subnet[*].id
 
   scaling_config {
-    desired_size = 5
+    desired_size = 4
     max_size     = 5
-    min_size     = 3
+    min_size     = 2
   }
 
   instance_types = ["t3.micro"]
