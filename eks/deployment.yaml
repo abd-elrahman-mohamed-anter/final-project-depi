@@ -21,6 +21,6 @@ spec:
         - name: SPRING_DATASOURCE_URL
           value: jdbc:mysql://db:3306/twitterdb
         - name: SPRING_DATASOURCE_USERNAME
-          value: root
+          value: **
         - name: SPRING_DATASOURCE_PASSWORD
-          value: rootpass
+          value: **
