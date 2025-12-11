@@ -6,28 +6,26 @@ This project demonstrates a complete **production-like DevOps pipeline** deploye
 
 # 📸 Screenshots
 
-> **🔽 ضع هنا صور الشغل بعد ما ترفعها (Infrastructure – Argo CD – Prometheus – Grafana – kubectl – Terraform Apply)**
-
 * **EKS Architecture Diagram:**
-  *Add Screenshot Here*
+  ![All Resources](screens/all-resources.png)
 
 * **Terraform Apply Output:**
-  *Add Screenshot Here*
+  ![Cluster](screens/cluster.png)
 
 * **kubectl get nodes / pods:**
-  *Add Screenshot Here*
+  ![Port Forward / Metrics](screens/portforward.png)
 
 * **Argo CD Dashboard:**
-  *Add Screenshot Here*
+  ![LLB / LoadBalancer](screens/llb.png)
 
 * **Prometheus UI:**
-  *Add Screenshot Here*
+  ![Prometheus](screens/prometheus.png)
 
 * **Grafana Dashboards:**
-  *Add Screenshot Here*
+  ![Grafana](screens/grafana.png)
 
 * **MySQL Deployment Running:**
-  *Add Screenshot Here*
+  ![Metrics](screens/metrics.png)
 
 ---
 
@@ -62,6 +60,14 @@ eks/
 ├── output.tf
 ├── terraform.tfstate
 └── terraform.tfstate.backup
+screens/
+├── all-resources.png
+├── cluster.png
+├── grafana.png
+├── llb.png
+├── metrics.png
+├── portforward.png
+└── prometheus.png
 ```
 
 ---
@@ -241,20 +247,8 @@ admin / admin
 
 # 🧱 Infrastructure Diagram
 
- 
-
-*Add Diagram Screenshot Here*
+![All Resources](screens/all-resources.png)
 
 ---
 
-# 📌 Notes
 
-This project is suitable for:
-
-* DevOps portfolios
-* LinkedIn posts
-* CI/CD + GitOps demonstrations
-* Learning EKS, Terraform, Prometheus, Grafana
-
-
-قولي وأنا أجهزها فوراً.
