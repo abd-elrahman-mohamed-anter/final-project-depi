@@ -4,7 +4,8 @@ This project demonstrates a complete **production-like DevOps pipeline** deploye
 ---
 
 # Workflow 
-           ┌────────────┐
+
+                    ┌────────────┐
            │ Terraform  │
            │  Init/Apply│
            └─────┬──────┘
@@ -23,15 +24,14 @@ This project demonstrates a complete **production-like DevOps pipeline** deploye
            │ (Pods/DB/    │
            │ Services)    │
            └─────┬────────┘
-                 │
-         ┌───────┴────────┐
-         ▼                ▼
- ┌──────────────┐    ┌──────────────┐
- │ Argo CD      │    │ Prometheus   │
- │ GitOps       │    │ Monitoring   │
- │ Continuous   │    └─────┬────────┘
- │ Deployment   │          │
- └──────────────┘          ▼
+       ┌─────────┴─────────┐
+       ▼                   ▼
+┌──────────────┐     ┌──────────────┐
+│  Argo CD     │     │ Prometheus   │
+│ GitOps       │     │ Monitoring   │
+│ Continuous   │     └─────┬────────┘
+│ Deployment   │           │
+└──────────────┘           ▼
                         ┌──────────────┐
                         │ Grafana      │
                         │ Dashboards   │
