@@ -1,6 +1,41 @@
 # 🚀 AWS EKS Deployment with Terraform, Kubernetes, Argo CD (GitOps), Prometheus, Grafana & MySQL
 
 This project demonstrates a complete **production-like DevOps pipeline** deployed on **Amazon EKS**, fully automated with **Terraform**, monitored with **Prometheus & Grafana**, and continuously deployed using **Argo CD (GitOps)**.
+---
+
+# Workflow 
+           ┌────────────┐
+           │ Terraform  │
+           │  Init/Apply│
+           └─────┬──────┘
+                 │
+                 ▼
+           ┌────────────┐
+           │ AWS EKS    │
+           │ Cluster +  │
+           │ Node Group │
+           └─────┬──────┘
+                 │
+                 ▼
+           ┌──────────────┐
+           │ Kubernetes   │
+           │ Workloads    │
+           │ (Pods/DB/    │
+           │ Services)    │
+           └─────┬────────┘
+                 │
+         ┌───────┴────────┐
+         ▼                ▼
+ ┌──────────────┐    ┌──────────────┐
+ │ Argo CD      │    │ Prometheus   │
+ │ GitOps       │    │ Monitoring   │
+ │ Continuous   │    └─────┬────────┘
+ │ Deployment   │          │
+ └──────────────┘          ▼
+                        ┌──────────────┐
+                        │ Grafana      │
+                        │ Dashboards   │
+                        └──────────────┘
 
 ---
 
