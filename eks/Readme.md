@@ -5,37 +5,22 @@ This project demonstrates a complete **production-like DevOps pipeline** deploye
 
 # Workflow 
 
-                    ┌────────────┐
-           │ Terraform  │
-           │  Init/Apply│
-           └─────┬──────┘
-                 │
-                 ▼
-           ┌────────────┐
-           │ AWS EKS    │
-           │ Cluster +  │
-           │ Node Group │
-           └─────┬──────┘
-                 │
-                 ▼
-           ┌──────────────┐
-           │ Kubernetes   │
-           │ Workloads    │
-           │ (Pods/DB/    │
-           │ Services)    │
-           └─────┬────────┘
-       ┌─────────┴─────────┐
-       ▼                   ▼
-┌──────────────┐     ┌──────────────┐
-│  Argo CD     │     │ Prometheus   │
-│ GitOps       │     │ Monitoring   │
-│ Continuous   │     └─────┬────────┘
-│ Deployment   │           │
-└──────────────┘           ▼
-                        ┌──────────────┐
-                        │ Grafana      │
-                        │ Dashboards   │
-                        └──────────────┘
+Terraform
+   │
+   ▼
+AWS EKS Cluster + Node Group
+   │
+   ▼
+Kubernetes Workloads (Pods/DB/Services)
+   │
+   ├─────────────┐
+   ▼             ▼
+Argo CD       Prometheus
+(GitOps)     (Monitoring)
+               │
+               ▼
+             Grafana
+           (Dashboards)
 
 ---
 
