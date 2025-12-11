@@ -7,14 +7,12 @@ target/
 *.iml
 *.log
 *.jmod
-*.class
 
 # Maven / IntelliJ / IDE files
 .idea/
 *.ipr
 *.iws
 *.DS_Store
-*.log
 .mvn/wrapper/maven-wrapper.jar
 
 # ===== Spring Boot =====
@@ -24,17 +22,22 @@ spring-boot-*.war
 # ===== Docker =====
 *.env
 *.dockerignore
-Dockerfile
 docker-compose.override.yml
 
 # ===== Helm =====
-helm/**/charts/*.tgz      # ignore packaged charts
-helm/**/Chart.lock        # ignore lock files
+helm/**/charts/*.tgz
+helm/**/Chart.lock
 
 # ===== Kubernetes / Kustomize =====
+# ارفع ملفات الـ eks/*.yaml عشان دي configs مهمة
+# لكن تجاهل أي manifests generated أو مؤقتة
 k8s/**/kustomization.yaml
-*.yaml                  # optional: only ignore generated manifests if any
-*.yml
+
+# ===== Terraform =====
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
 
 # ===== VSCode / Editors =====
 .vscode/
@@ -47,7 +50,9 @@ logs/
 tmp/
 *.tmp
 
-# ===== Static / Resources (optional) =====
-# Keep static resources if part of repo, ignore compiled/generated if any
+# ===== Static / Resources =====
 target/classes/static/
 target/classes/templates/
+
+
+.terraform/
