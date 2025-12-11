@@ -217,13 +217,13 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 ### Prometheus
 
 ```bash
-kubectl port-forward svc/prometheus 9090:9090
+kubectl port-forward svc/prometheus 9091:9090
 ```
 
 ### Grafana
 
 ```bash
-kubectl port-forward svc/grafana 3000:3000
+kubectl port-forward svc/grafana 3005:3000
 ```
 
 Default login:
