@@ -1,190 +1,62 @@
-# 🚀 AWS EKS Deployment with Terraform, Kubernetes, Argo CD (GitOps), Prometheus, Grafana & MySQL
+# AWS EKS Deployment — Terraform + ArgoCD + Prometheus + Grafana + MySQL
 
-This project demonstrates a complete **production-like DevOps pipeline** deployed on **Amazon EKS**, fully automated with **Terraform**, monitored with **Prometheus & Grafana**, and continuously deployed using **Argo CD (GitOps)**.
----
-
-# 📸 Screenshots
-
-* **EKS Resources Diagram:**
-  ![All Resources](screens/all-resources.png)
-
-* **Application Running :**
-  ![App](screens/app.png)
-
-* **Argo CD Dashboard:**
-  ![Argo CD](screens/argo.jpg)
-
-* **Terraform Apply Output:**
-  ![Terraform Output](screens/tf-out.png)
-
-* **Load Balancer / Service:**
-  ![LLB / Load Balancer](screens/llb.png)
-
-* **Prometheus UI:**
-  ![Prometheus](screens/prometheus.png)
-
-* ** Grafana Dashboards:**
-  ![Grafana](screens/grafana.png)
-
-* **Metrics / Monitoring:**
-  ![Metrics](screens/metrics.png)
-
-* **Port Forward Example for Prometheus & Grafana :**
-  ![Port Forward](screens/portforward.png)
+full production-like setup on EKS, everything provisioned with terraform and deployed via gitops using argocd. monitoring with prometheus & grafana.
 
 ---
 
-# 🏗️ Architecture Summary
+## what this does
 
-### 🔹 Terraform creates:
-
-* VPC (10.0.0.0/16)
-* **2 Public Subnets** across **AZ[0] & AZ[1]**
-* Internet Gateway
-* Route Tables
-* Security Groups
-* IAM Roles for EKS & NodeGroup
-* **EKS Cluster** (`project-cluster`)
-* **Node Group** (4 nodes – t3.micro)
+spins up an EKS cluster on AWS from scratch using terraform, deploys a java app with mysql backend, sets up argocd to watch the git repo and auto-deploy on push, and monitors everything with prometheus + grafana.
 
 ---
 
-# 📁 Project Structure
+## infra (terraform)
+
+- VPC `10.0.0.0/16`
+- 2 public subnets across 2 AZs
+- internet gateway + route tables
+- security groups (cluster + nodes)
+- IAM roles for EKS and node group
+- EKS cluster: `project-cluster`
+- node group: 4x t3.micro, autoscaling min=2 max=5
+
+---
+
+## project structure
 
 ```
 eks/
-├── argocd-mainfast.yaml
+├── main.tf
+├── variables.tf
+├── output.tf
+├── terraform.tfstate
 ├── deployment.yaml
 ├── svc.yaml
 ├── db.yaml
 ├── prometheus-configmap.yaml
 ├── prometheus-deployment.yaml
 ├── grafana-deployment.yaml
-├── main.tf
-├── variables.tf
-├── output.tf
-├── terraform.tfstate
-└── terraform.tfstate.backup
+└── argocd-mainfast.yaml
 ```
 
 ---
 
-# 🧩 Terraform (main.tf)
+## how to run
 
-This Terraform file builds the **entire AWS infrastructure**:
-
-### ✔️ VPC + Subnets
-
-* VPC: `10.0.0.0/16`
-* **Two subnets**, auto-assigned:
-
-  * `project-subnet-0` → AZ[0]
-  * `project-subnet-1` → AZ[1]
-* Public because `map_public_ip_on_launch = true`
-
-### ✔️ Internet Gateway + Route Table
-
-Routes `0.0.0.0/0` to IGW.
-
-### ✔️ Security Groups
-
-* Cluster SG (egress only)
-* Node SG (SSH allowed for your IP: `156.221.20.201/32`)
-* Full communication between cluster & nodes
-
-### ✔️ IAM Roles
-
-* Cluster Role
-* NodeGroup Role
-* All required AWS EKS policies
-
-### ✔️ EKS Cluster
-
-```
-name = "project-cluster"
-```
-
-### ✔️ NodeGroup
-
-* 4 nodes
-* `t3.micro`
-* SSH enabled
-* AutoScaling (min=2, max=5)
-
----
-
-# 📦 Kubernetes Manifests
-
-### 👉 MySQL (`db.yaml`)
-
-* MySQL 8
-* Database: `twitterdb`
-* Password: `your--pass`
-* Service: `db` on port 3306
-
----
-
-### 👉 Prometheus (`prometheus-deployment.yaml` + ConfigMap)
-
-* Prometheus 2.52
-* Service: ClusterIP
-* Reads config from ConfigMap
-
----
-
-### 👉 Grafana (`grafana-deployment.yaml`)
-
-* Grafana 11
-* Service: ClusterIP
-* Port 3000
-
----
-
-### 👉 Application Deployment (`deployment.yaml`)
-
-Your Java full-stack application:
-
-* Pods
-* Labels
-* Service (NodePort/LoadBalancer)
-
----
-
-### 👉 GitOps with Argo CD (`argocd-mainfast.yaml`)
-
-* ArgoCD monitors your Git repo
-* Any push → auto deploy to EKS
-* Full GitOps CI/CD pipeline
-
----
-
-# 🚀 Deploying
-
-## 1️⃣ Initialize Terraform
+**1. init and apply terraform**
 
 ```bash
 terraform init
-```
-
-## 2️⃣ Apply
-
-```bash
 terraform apply -auto-approve
 ```
 
----
-
-# 🔐 Connect to EKS
+**2. connect kubectl to the cluster**
 
 ```bash
-aws eks update-kubeconfig \
-  --region us-east-1 \
-  --name project-cluster
+aws eks update-kubeconfig --region us-east-1 --name project-cluster
 ```
 
----
-
-# 📥 Deploy Kubernetes Workloads
+**3. deploy everything**
 
 ```bash
 kubectl apply -f db.yaml
@@ -195,15 +67,13 @@ kubectl apply -f deployment.yaml
 kubectl apply -f svc.yaml
 ```
 
----
-
-# 🤖 Enable GitOps with Argo CD
+**4. enable argocd gitops**
 
 ```bash
 kubectl apply -f argocd-mainfast.yaml
 ```
 
-Get ArgoCD password:
+get the argocd admin password:
 
 ```bash
 kubectl -n argocd get secret argocd-initial-admin-secret \
@@ -212,32 +82,50 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 
 ---
 
-# 📊 Monitoring
+## monitoring
 
-### Prometheus
+port-forward to access locally:
 
 ```bash
+# prometheus
 kubectl port-forward svc/prometheus 9091:9090
-```
 
-### Grafana
-
-```bash
+# grafana
 kubectl port-forward svc/grafana 3005:3000
 ```
 
-Default login:
-
-```
-admin / admin
-```
+grafana default login: `admin / admin`
 
 ---
 
-# 🛡️ Security Notes
+## kubernetes components
 
-* SSH only allowed from your IP: `<your IP>/32`
-* Monitoring stack isolated via ClusterIP
-* DB internal-only (no public exposure)
+- **db.yaml** — mysql 8, database: `twitterdb`, service on port 3306
+- **deployment.yaml** — java app, nodeport/loadbalancer service
+- **prometheus** — v2.52, clusterip, config from configmap
+- **grafana** — v11, clusterip, port 3000
+- **argocd-mainfast.yaml** — watches git repo, auto-deploys on any push
 
 ---
+
+## security
+
+- SSH access restricted to your IP only (`<your-ip>/32`)
+- prometheus and grafana are clusterip — not exposed publicly
+- mysql is internal only
+
+---
+
+## screenshots
+
+| | |
+|---|---|
+| all resources | ![](screens/all-resources.png) |
+| app running | ![](screens/app.png) |
+| argocd dashboard | ![](screens/argo.jpg) |
+| terraform output | ![](screens/tf-out.png) |
+| load balancer | ![](screens/llb.png) |
+| prometheus | ![](screens/prometheus.png) |
+| grafana | ![](screens/grafana.png) |
+| metrics | ![](screens/metrics.png) |
+| port-forward | ![](screens/portforward.png) |
