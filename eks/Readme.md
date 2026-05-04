@@ -12,13 +12,17 @@ spins up an EKS cluster on AWS from scratch using terraform, deploys a java app 
 
 ## infra (terraform)
 
+everything is in `main.tf`, single apply and the whole thing comes up.
+
 - VPC `10.0.0.0/16`
-- 2 public subnets across 2 AZs
-- internet gateway + route tables
-- security groups (cluster + nodes)
-- IAM roles for EKS and node group
-- EKS cluster: `project-cluster`
-- node group: 4x t3.micro, autoscaling min=2 max=5
+- 2 public subnets across 2 AZs — both with `map_public_ip_on_launch = true`
+- internet gateway attached to the VPC, route table sends `0.0.0.0/0` through it
+- 2 security groups: one for the cluster (egress only), one for the nodes (SSH from your IP only)
+- IAM roles: cluster role + node group role with the required EKS managed policies attached
+- EKS cluster: `project-cluster` in `us-east-1`
+- node group: 4x t3.micro, SSH enabled, autoscaling configured (min=2, max=5)
+
+the state is stored locally (`terraform.tfstate`) — if you're working in a team you'd want to move that to S3 + DynamoDB for locking.
 
 ---
 
@@ -50,11 +54,21 @@ terraform init
 terraform apply -auto-approve
 ```
 
+takes around 10-15 min for the EKS cluster to fully come up. don't cancel mid-way.
+
 **2. connect kubectl to the cluster**
 
 ```bash
 aws eks update-kubeconfig --region us-east-1 --name project-cluster
 ```
+
+verify it's working:
+
+```bash
+kubectl get nodes
+```
+
+all 4 nodes should show `Ready` before you proceed.
 
 **3. deploy everything**
 
@@ -82,9 +96,24 @@ kubectl -n argocd get secret argocd-initial-admin-secret \
 
 ---
 
+## gitops flow (argocd)
+
+`argocd-mainfast.yaml` creates an ArgoCD `Application` resource that points to this git repo. once applied, argocd polls the repo every few seconds — any change you push to the manifests gets automatically synced to the cluster without you touching kubectl again.
+
+the flow is:
+```
+push to git → argocd detects diff → applies changes to EKS → done
+```
+
+if a deployment fails, argocd shows it in the dashboard with the exact error. you can also set it to auto-rollback but that's not configured here by default.
+
+---
+
 ## monitoring
 
-port-forward to access locally:
+prometheus scrapes metrics from the cluster using the config in `prometheus-configmap.yaml`. grafana connects to prometheus as a data source and visualizes everything.
+
+both are running as ClusterIP services — they're not exposed externally, so you access them via port-forward:
 
 ```bash
 # prometheus
@@ -96,23 +125,27 @@ kubectl port-forward svc/grafana 3005:3000
 
 grafana default login: `admin / admin`
 
+on grafana, add prometheus as a data source (`http://prometheus:9090`) then import a dashboard — dashboard ID `3119` works well for kubernetes cluster monitoring.
+
 ---
 
 ## kubernetes components
 
-- **db.yaml** — mysql 8, database: `twitterdb`, service on port 3306
-- **deployment.yaml** — java app, nodeport/loadbalancer service
-- **prometheus** — v2.52, clusterip, config from configmap
-- **grafana** — v11, clusterip, port 3000
-- **argocd-mainfast.yaml** — watches git repo, auto-deploys on any push
+- **db.yaml** — mysql 8, database: `twitterdb`, service on port 3306, internal only
+- **deployment.yaml** — java app, exposed via loadbalancer service
+- **svc.yaml** — service definition for the app
+- **prometheus-configmap.yaml** — scrape config for prometheus
+- **prometheus-deployment.yaml** — prometheus v2.52, clusterip
+- **grafana-deployment.yaml** — grafana v11, clusterip, port 3000
+- **argocd-mainfast.yaml** — argocd application pointing to this repo
 
 ---
 
 ## security
 
-- SSH access restricted to your IP only (`<your-ip>/32`)
-- prometheus and grafana are clusterip — not exposed publicly
-- mysql is internal only
+- SSH access to nodes is restricted to your IP only (`<your-ip>/32`) — update this in `main.tf` before applying
+- prometheus and grafana are clusterip — not reachable from outside the cluster
+- mysql has no external service, internal only on port 3306
 
 ---
 
